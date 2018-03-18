@@ -19,33 +19,33 @@ def construct_address(venue, city):
 
 
 def format_events(events_data, city):
-  results = []
+    results = []
 
-  for event in events_data:
-    if 'repinned' in event['venue']:
-      event['venue'].pop('repinned')
+    for event in events_data:
+        if 'repinned' in event['venue']:
+            event['venue'].pop('repinned')
 
-    row = {
-      'id': event['id'],
-      'name': event['name'],
-      'description': event['description'],
-      'location': construct_address(event['venue'], city),
-      'venue': event['venue'],
-      'rsvp_count': event['yes_rsvp_count'],
-      'rsvp_limit': event.get('rsvp_limit'),
-      'waitlist_count': event.get('waitlist_count'),
-      'url': event['event_url'],
-      'group_id': event['group']['id'],
-      'group_name': event['group']['name'],
-      'group_url': 'https://meetup.com/' + event['group']['urlname'],
-      'duration': event.get('duration'),
-      'utc_offset': event['utc_offset'],
-      'start_time': event['time'],
-      'end_time': event['time'] + event.get('duration', 0),
-      'platform': 'meetup'
-    }
+        row = {
+          'id': event['id'],
+          'name': event['name'],
+          'description': event['description'],
+          'location': construct_address(event['venue'], city),
+          'venue': event['venue'],
+          'rsvp_count': event['yes_rsvp_count'],
+          'rsvp_limit': event.get('rsvp_limit'),
+          'waitlist_count': event.get('waitlist_count'),
+          'url': event['event_url'],
+          'group_id': event['group']['id'],
+          'group_name': event['group']['name'],
+          'group_url': 'https://meetup.com/' + event['group']['urlname'],
+          'duration': event.get('duration'),
+          'utc_offset': event['utc_offset'],
+          'start_time': event['time'],
+          'end_time': event['time'] + event.get('duration', 0),
+          'platform': 'meetup'
+        }
 
-    results.append(row)
+        results.append(row)
 
-  sorted(results, key=lambda x: x['start_time'])
-  return results
+    sorted(results, key=lambda x: x['start_time'])
+    return results
