@@ -32,6 +32,7 @@ def events():
   events = grab_meetup_events(config)
   return jsonify(events)
 
+app = default_app()
 
 if __name__ == "__main__":
-  app.run()
+  app.run(host='0.0.0.0', port=8080)
