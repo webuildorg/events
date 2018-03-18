@@ -15,7 +15,7 @@ def get_events():
     if len(data) > 0:
         lock.acquire()
         global events_data
-        data = events_data
+        events_data = data
         lock.release()
 
 
