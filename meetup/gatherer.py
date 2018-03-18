@@ -30,7 +30,7 @@ def good_bad_group_ids(groups_data, blacklist_tokens=[]):
                 bad += 1
 
         if bad > 0:
-            print(group_name)
+            # print(group_name)
             bad_ids.append(str(gid))
         else:
             good_ids.append(str(gid))

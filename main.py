@@ -2,9 +2,28 @@ import config
 import os
 from meetup import gatherer, formatter, filters
 from flask import Flask, jsonify
+import threading
+import time
 
 app = Flask(__name__)
 events_data = []
+lock = threading.Lock()
+
+def get_events():
+    data = grab_meetup_events(config)
+
+    if len(data) > 0:
+        lock.acquire()
+        global events_data
+        data = events_data
+        lock.release()
+
+
+def cron():
+    # Check for events every 30mins=1800secs
+    time.sleep(1800)
+    get_events()
+
 
 def grab_meetup_events(config):
     groups = gatherer.get_groups(config.meetup['groups_url'], config.meetup['params'].copy())
@@ -27,8 +46,11 @@ def dump_data(events_json):
 
 
 def run():
-    global events_data
-    events_data = grab_meetup_events(config)
+    get_events()
+    w = threading.Thread(name='worker', target=cron)
+    w.start()
+    return app
+
 
 @app.route('/')
 def hello():
