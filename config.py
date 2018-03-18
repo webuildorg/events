@@ -14,7 +14,6 @@ meetup = {
     'params': {
         'key': os.environ['MEETUP_API_KEY'],
         'country': 'SG',
-        'city': 'Singapore',
         'location': 'Singapore',
         'category': 34
     }

@@ -14,7 +14,7 @@ def tokenize(text):
     str
         Tokens from `text`.
     """
-    for match in PAT_ALPHABETIC.finditer(text):
+    for match in PAT_ALPHABETIC.finditer(text.lower()):
         yield match.group()
 
 
