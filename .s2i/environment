@@ -1,3 +1,2 @@
-APP_FILE=main.py
 APP_MODULE=main:run
 APP_CONFIG=gunicorn.py
