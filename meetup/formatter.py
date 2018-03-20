@@ -45,7 +45,7 @@ def format_events(events_data, city, datetime_format):
             'utc_offset': utc_offset,
             'duration': duration,
             'start_time': start_time,
-            'end_time': start_time,
+            'end_time': start_time + duration,
             'formatted_time': datetime.datetime.utcfromtimestamp(
                 start_time + utc_offset).strftime(datetime_format),
             'platform': 'meetup'

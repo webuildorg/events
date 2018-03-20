@@ -4,6 +4,7 @@ import meetup
 from flask import Flask, jsonify
 import threading
 import time
+import exporters
 
 app = Flask(__name__)
 events_data = []
@@ -42,6 +43,11 @@ def hello():
 def events():
     global events_data
     return jsonify(events_data)
+
+
+@app.route('/cal')
+def cal():
+    return exporters.events_to_ics(events_data)
 
 
 if __name__ == "__main__":
