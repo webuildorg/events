@@ -2,3 +2,4 @@ gunicorn
 Flask
 requests
 icalendar
+beautifulsoup4
