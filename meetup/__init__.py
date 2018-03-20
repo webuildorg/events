@@ -1,5 +1,6 @@
 from . import gatherer, formatter, filters
 
+
 def grab_events(config):
     groups = gatherer.get_groups(config.meetup['groups_url'], config.meetup['params'].copy())
     print('Gathered', len(groups), 'groups')
@@ -11,5 +12,7 @@ def grab_events(config):
     good_events = list(filters.filter_good_events(events_data, config.blacklist_tokens,
                             config.meetup['params']['country'], config.meetup['max_event_hours']))
     print('Filtered {} down to {} good meetup events'.format(len(events_data), len(good_events)))
-    return formatter.format_events(good_events, config.meetup['params']['location'])
-
+    return formatter.format_events(
+        good_events,
+        config.meetup['params']['location'],
+        config.meetup['display_time_format'])
