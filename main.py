@@ -23,7 +23,7 @@ def get_events():
 
 def cron():
     # Check for events every 30mins=1800secs
-    time.sleep(1800)
+    time.sleep(300)
     get_events()
 
 
