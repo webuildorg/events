@@ -29,8 +29,8 @@ def cron():
 
 def run():
     get_events()
-    w = threading.Thread(name='worker', target=cron)
-    w.start()
+    # w = threading.Thread(name='worker', target=cron)
+    # w.start()
     return app
 
 
@@ -47,6 +47,8 @@ def events():
 
 @app.route('/cal')
 def cal():
+    w = threading.Thread(name='worker', target=get_events)
+    w.start()
     return exporters.events_to_ics(events_data)
 
 
