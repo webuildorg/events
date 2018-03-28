@@ -1,13 +1,15 @@
+import threading
+import time
+from flask import Flask, jsonify
+
 import config
 import os
 import meetup
-from flask import Flask, jsonify
-import threading
-import time
 import exporters
 
 app = Flask(__name__)
 events_data = []
+cron_timestamp = time.time()
 lock = threading.Lock()
 
 
@@ -20,12 +22,6 @@ def get_events():
         events_data = data
         lock.release()
     return
-
-
-def cron():
-    # Check for events every 30mins=1800secs
-    time.sleep(300)
-    get_events()
 
 
 def run():
@@ -53,9 +49,15 @@ def cal():
 
 @app.route('/cron')
 def cron():
-    w = threading.Thread(name='worker', target=get_events)
-    w.start()
-    return 'done'
+    global cron_timestamp
+    now = time.time()
+
+    if now - cron_timestamp > 300: # 5 mins
+        cron_timestamp = now
+        w = threading.Thread(name='worker', target=get_events)
+        w.start()
+
+    return 'Done at {}'.format(cron_timestamp)
 
 
 if __name__ == "__main__":
