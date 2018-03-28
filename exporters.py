@@ -19,6 +19,7 @@ def events_to_ics(events):
             for b in soup.find_all('br'):
                 b.replace_with('\n')
             description = '\n\n'.join([p.get_text() for p in paragraphs])
+            description += '\n\nRSVP count: {}'.format(event['rsvp_count'])
 
         cal_event = Event()
         cal_event['uid'] = event['id']
