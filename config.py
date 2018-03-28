@@ -1,9 +1,19 @@
 import os
 
-blacklist_tokens = frozenset([
-  'ethereum', 'blockchain', 'bitcoin', 'ico', 'crypto trading',
-  'cryptocurrency', 'cryptocurrencies', 'money', 'gold',
-  'business', 'investor', 'entrepreneurs'])
+blockchain_blacklist_tokens = frozenset([
+  'ethereum', 'blockchain', 'bitcoin', 'ico', 'crypto',
+  'cryptocurrency', 'cryptocurrencies', 'money', 'gold'])
+
+business_blacklist_tokens = frozenset([
+    'business', 'investor', 'entrepreneurs', 'co-founders'])
+
+multi_blacklist_tokens = [
+    blockchain_blacklist_tokens,
+    business_blacklist_tokens
+]
+token_thresholds = [1, 4]
+
+blacklist_tokens = frozenset(list(blockchain_blacklist_tokens) + list(business_blacklist_tokens))
 
 meetup = {
     'groups_url': 'https://api.meetup.com/find/groups',

@@ -30,8 +30,6 @@ def cron():
 
 def run():
     get_events()
-    # w = threading.Thread(name='worker', target=cron)
-    # w.start()
     return app
 
 
@@ -48,11 +46,16 @@ def events():
 
 @app.route('/cal')
 def cal():
-    w = threading.Thread(name='worker', target=get_events)
-    w.start()
     return exporters.events_to_ics(events_data)
 
 
+@app.route('/cron')
+def cron():
+    w = threading.Thread(name='worker', target=get_events)
+    w.start()
+    return 'done'
+
+
 if __name__ == "__main__":
-    run()
+    app = run()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

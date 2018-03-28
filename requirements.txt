@@ -3,3 +3,4 @@ Flask
 requests
 icalendar
 beautifulsoup4
+gensim
