@@ -41,7 +41,9 @@ def hello():
 @app.route('/events')
 def events():
     global events_data
-    return jsonify(events_data)
+    resp = jsonify(events_data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/cal')
