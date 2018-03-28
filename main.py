@@ -19,6 +19,7 @@ def get_events():
         global events_data
         events_data = data
         lock.release()
+    return
 
 
 def cron():
