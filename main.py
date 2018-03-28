@@ -1,6 +1,8 @@
 import threading
 import time
-from flask import Flask, jsonify, Response
+import hashlib
+import json
+from flask import Flask, jsonify, Response, request
 
 import config
 import os
@@ -36,9 +38,15 @@ def hello():
 
 @app.route('/events')
 def events():
+    if request.method not in ('GET', 'OPTIONS'):
+        return Response('Invalid method', status_code=405)
+
     global events_data
+    m = hashlib.sha1(json.dumps(events_data, ensure_ascii=False).encode('utf8'))
     resp = jsonify(events_data)
     resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.set_etag(m.hexdigest())
+
     return resp
 
 
