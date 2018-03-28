@@ -1,6 +1,6 @@
 import threading
 import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response
 
 import config
 import os
@@ -44,7 +44,7 @@ def events():
 
 @app.route('/cal')
 def cal():
-    return exporters.events_to_ics(events_data)
+    return Response(exporters.events_to_ics(events_data), content_type='text/calendar; charset=utf-8')
 
 
 @app.route('/cron')
