@@ -43,7 +43,7 @@ def is_valid_venue(event, country):
 
 def has_valid_duration(event, max_hours=8):
     # Convert duration from milliseconds to hours
-    return event.get('duration', 0) / 3600000 < max_hours
+    return event.get('duration', 0) / 3600000 <= max_hours
 
 
 def is_valid_event(event, blacklist_tokens=frozenset(), country='sg', max_hours=8):
