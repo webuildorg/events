@@ -18,7 +18,7 @@ blacklist_tokens = frozenset(list(blockchain_blacklist_tokens) + list(business_b
 meetup = {
     'groups_url': 'https://api.meetup.com/find/groups',
     'events_url': 'https://api.meetup.com/2/events',
-    'max_event_hours': 8,
+    'max_event_hours': 12,
     'max_meetup_responses': 150,
     'display_time_format': '%d-%b, %a, %I:%M %p',
 
