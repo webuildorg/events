@@ -56,15 +56,25 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
         # Check the group name + audience for blacklist tokens
         group_name = group['name'].lower() + ' ' + group['who'].lower()
 
-        for name_token in simple_tokenize(group_name):
-            for i, blacklist_tokens in enumerate(multi_blacklist_tokens):
-                if name_token in blacklist_tokens:
+        # for name_token in simple_tokenize(group_name):
+        #     for i, blacklist_tokens in enumerate(multi_blacklist_tokens):
+        #         if name_token in blacklist_tokens:
+        #             bad_counts[i] += 1
+
+        # # Add group id to the bad ids if group name was blacklisted
+        # if max(bad_counts) > 0:
+        #     bad_ids[np.argmax(bad_counts)].append(gid)
+        #     bad_indexes.append(group_idx)
+        #     continue
+
+        for i, tokens in enumerate(multi_blacklist_tokens):
+            for token in tokens:
+                if token in group_name:
                     bad_counts[i] += 1
 
         # Add group id to the bad ids if group name was blacklisted
         if max(bad_counts) > 0:
             bad_ids[np.argmax(bad_counts)].append(gid)
-            bad_indexes.append(group_idx)
             continue
 
         # Next, check the group description for blacklist tokens

@@ -15,7 +15,7 @@ class Meetup(object):
         print('Gathered', len(groups), 'groups')
 
         good_ids, multi_bad_ids, good_indexes, bad_indexes = gatherer.good_bad_group_ids(
-            groups, config.multi_enhanced_blacklist_tokens, config.token_thresholds)
+            groups, config.multi_blacklist_tokens, config.token_thresholds)
         bad_ids = list(itertools.chain.from_iterable(multi_bad_ids))
         print('Found {} good meetup groups, {} bad meetup groups'.format(len(good_ids), len(bad_ids)))
 
