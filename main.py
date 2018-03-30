@@ -56,7 +56,7 @@ def set_headers(f):
         @after_this_request
         def set_response_headers(response):
             response.headers['Access-Control-Allow-Origin'] = '*'
-            response.headers['Cache-Control'] = 'public, max-age=0'
+            response.headers['Cache-Control'] = 'public, max-age=30'
             response.set_etag(webuild.data_hash)
             return response
         return f(*args, **kwargs)
