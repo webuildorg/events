@@ -17,7 +17,6 @@ class WeBuild:
         self.events_data = []
         self.meetup = Meetup(config)
         self.data_hash = ''
-        self.data_hashes = {}
         self.last_checked_timestamp = time.time()
         self.lock = threading.Lock()
 
@@ -82,6 +81,8 @@ def check_etag(f):
 
 
 def get_events():
+    return 'TODO'
+
     global webuild
     data = webuild.meetup.grab_events()
     m = hashlib.sha1(json.dumps(data, ensure_ascii=False).encode('utf8'))
