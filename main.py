@@ -2,27 +2,94 @@ import threading
 import time
 import hashlib
 import json
-from flask import Flask, jsonify, Response, request
+import functools
+from io import BytesIO
+from gzip import GzipFile
+from flask import Flask, jsonify, Response, request, send_from_directory, after_this_request
 
 import config
 import os
 import meetup
 import exporters
 
+class WeBuild:
+    def __init__(self):
+        self.events_data = []
+        self.data_hash = ''
+        self.last_checked_timestamp = time.time()
+        self.lock = threading.Lock()
+
 app = Flask(__name__)
-events_data = []
-cron_timestamp = time.time()
-lock = threading.Lock()
+webuild = WeBuild()
+
+
+def gzipped(f):
+    @functools.wraps(f)
+    def view_func(*args, **kwargs):
+        @after_this_request
+        def zipper(response):
+            if ('gzip' not in request.headers.get('Accept-Encoding', '').lower() or
+                not 200 <= response.status_code < 300 or
+                'Content-Encoding' in response.headers):
+                return response
+
+            response.direct_passthrough = False
+            gzip_buffer = BytesIO()
+            with GzipFile(mode='wb',
+                      compresslevel=7,
+                      fileobj=gzip_buffer) as gzip_file:
+                gzip_file.write(response.get_data())
+
+            response.set_data(gzip_buffer.getvalue())
+            response.headers['Content-Encoding'] = 'gzip'
+            response.headers['Vary'] = 'Accept-Encoding'
+            response.headers['Content-Length'] = len(response.data)
+
+            return response
+        return f(*args, **kwargs)
+    return view_func
+
+
+def set_headers(f):
+    @functools.wraps(f)
+    def view_func(*args, **kwargs):
+        @after_this_request
+        def set_response_headers(response):
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Cache-Control'] = 'public, max-age=0'
+            response.set_etag(webuild.data_hash)
+            return response
+        return f(*args, **kwargs)
+    return view_func
+
+
+def check_etag(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        @app.before_request
+        def check_headers():
+            if request.method not in ('GET', 'OPTIONS'):
+                return Response('Invalid method', status=405)
+
+            if request.if_none_match and webuild.data_hash in request.if_none_match:
+                print('304 response!')
+                return Response(status=304)
+
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def get_events():
+    global webuild
     data = meetup.grab_events(config)
+    m = hashlib.sha1(json.dumps(data, ensure_ascii=False).encode('utf8'))
+    data_hash = m.hexdigest()
 
-    if len(data) > 0:
-        lock.acquire()
-        global events_data
-        events_data = data
-        lock.release()
+    if len(data) > 0 and data_hash != webuild.data_hash:
+        webuild.lock.acquire()
+        webuild.events_data = data
+        webuild.data_hash = data_hash
+        webuild.lock.release()
     return
 
 
@@ -33,39 +100,49 @@ def run():
 
 @app.route('/')
 def hello():
-    return 'Welcome to webuild\'s API'
+    return Response('Welcome to webuild\'s API')
 
 
 @app.route('/events')
+@check_etag
+@set_headers
+@gzipped
 def events():
-    if request.method not in ('GET', 'OPTIONS'):
-        return Response('Invalid method', status_code=405)
-
-    global events_data
-    m = hashlib.sha1(json.dumps(events_data, ensure_ascii=False).encode('utf8'))
-    resp = jsonify(events_data)
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    resp.set_etag(m.hexdigest())
-
-    return resp
+    return Response(
+        json.dumps(webuild.events_data, ensure_ascii=False),
+        content_type='application/json')
 
 
 @app.route('/cal')
+@check_etag
+@set_headers
+@gzipped
 def cal():
-    return Response(exporters.events_to_ics(events_data), content_type='text/calendar; charset=utf-8')
+    return Response(
+        exporters.events_to_ics(webuild.events_data),
+        content_type='text/calendar; charset=utf-8')
 
 
 @app.route('/cron')
 def cron():
-    global cron_timestamp
+    global webuild
     now = time.time()
 
-    if now - cron_timestamp > 300: # 5 mins
-        cron_timestamp = now
+    if now - webuild.last_checked_timestamp > 300: # 5 mins
+        webuild.lock.acquire()
+        webuild.last_checked_timestamp = now
+        webuild.lock.release()
+
         w = threading.Thread(name='worker', target=get_events)
         w.start()
 
-    return 'Done at {}'.format(cron_timestamp)
+    return 'Done at {}'.format(webuild.last_checked_timestamp)
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/x-icon')
 
 
 if __name__ == "__main__":
