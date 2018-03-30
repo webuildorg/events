@@ -1,2 +1,4 @@
-workers = 2
-threads = 4
+import os
+
+workers = int(os.environ.get('GUNICORN_PROCESSES', '3'))
+threads = int(os.environ.get('GUNICORN_THREADS', '5'))
