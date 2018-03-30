@@ -4,3 +4,4 @@ requests
 icalendar
 beautifulsoup4
 gensim
+inflect
