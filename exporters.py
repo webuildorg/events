@@ -10,6 +10,8 @@ def events_to_ics(events):
     cal = Calendar()
     cal.add('prodid', '-//We Build Org//calendar//EN')
     cal.add('version', '2.0')
+    cal.add('name', 'We Build SG')
+    cal.add('description', 'Free tech events in Singapore')
 
     for event in events:
         description = event['description']
