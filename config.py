@@ -2,12 +2,12 @@ import os
 from events import spellchecker
 
 blockchain_blacklist_tokens = frozenset([
-    'ethereum', 'blockchain', 'bitcoin', 'ico', 'crypto',
-    'cryptocurrency', 'cryptocurrencies', 'money', 'gold'])
+    'ethereum', 'blockchain', 'bitcoin', 'ico',
+    'crypto', 'cryptocurrency', 'money', 'gold'])
 
 business_blacklist_tokens = frozenset([
     'business',  'enterprise', 'entrepreneur', 'entrepreneurship',
-    'executive', 'cofounder', 'investor', 'marketer'])
+    'executive', 'founder', 'investor'])
 
 
 multi_blacklist_tokens = [
@@ -32,7 +32,7 @@ multi_enhanced_blacklist_tokens = [
     enhanced_business_blacklist_tokens
 ]
 
-print('{} tokens'.format(len(enhanced_blockchain_blacklist_tokens) + len(enhanced_business_blacklist_tokens)))
+print('{} blacklist tokens'.format(len(enhanced_blockchain_blacklist_tokens) + len(enhanced_business_blacklist_tokens)))
 
 # Minimum number of tokens to blacklist a group or event in each topic [blockchain, bussines]
 token_thresholds = [1, 4]
