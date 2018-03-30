@@ -9,18 +9,20 @@ from gzip import GzipFile
 from flask import Flask, jsonify, Response, request, send_from_directory, after_this_request
 
 import config
-from events import meetup
+from events.meetup import Meetup
 from events import exporters
 
 class WeBuild:
-    def __init__(self):
+    def __init__(self, config):
         self.events_data = []
+        self.meetup = Meetup(config)
         self.data_hash = ''
+        self.data_hashes = {}
         self.last_checked_timestamp = time.time()
         self.lock = threading.Lock()
 
 app = Flask(__name__)
-webuild = WeBuild()
+webuild = WeBuild(config)
 
 
 def gzipped(f):
@@ -68,12 +70,12 @@ def check_etag(f):
     def decorated_function(*args, **kwargs):
         @app.before_request
         def check_headers():
-            if request.method not in ('GET', 'OPTIONS'):
-                return Response('Invalid method', status=405)
-
             if request.if_none_match and webuild.data_hash in request.if_none_match:
                 print('304 response!')
                 return Response(status=304)
+
+            if request.method not in ('GET', 'OPTIONS'):
+                return Response('Invalid method', status=405)
 
         return f(*args, **kwargs)
     return decorated_function
@@ -81,7 +83,7 @@ def check_etag(f):
 
 def get_events():
     global webuild
-    data = meetup.grab_events(config)
+    data = webuild.meetup.grab_events()
     m = hashlib.sha1(json.dumps(data, ensure_ascii=False).encode('utf8'))
     data_hash = m.hexdigest()
 
@@ -103,11 +105,35 @@ def hello():
     return Response('Welcome to webuild\'s API')
 
 
+@app.route('/groups')
+@check_etag
+@set_headers
+@gzipped
+def groups():
+    return Response(
+        json.dumps(webuild.meetup.good_groups(), ensure_ascii=False),
+        content_type='application/json')
+
+
+@app.route('/filtered_groups')
+@check_etag
+@set_headers
+@gzipped
+def filtered_groups():
+    return Response(
+        json.dumps(webuild.meetup.bad_groups(), ensure_ascii=False),
+        content_type='application/json')
+
+
 @app.route('/events')
 @check_etag
 @set_headers
 @gzipped
 def events():
+    if request.if_none_match and webuild.data_hash in request.if_none_match:
+        print('304 response!')
+        return Response(status=304)
+
     return Response(
         json.dumps(webuild.events_data, ensure_ascii=False),
         content_type='application/json')

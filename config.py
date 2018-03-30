@@ -32,6 +32,8 @@ multi_enhanced_blacklist_tokens = [
     enhanced_business_blacklist_tokens
 ]
 
+print('{} tokens'.format(len(enhanced_blockchain_blacklist_tokens) + len(enhanced_business_blacklist_tokens)))
+
 # Minimum number of tokens to blacklist a group or event in each topic [blockchain, bussines]
 token_thresholds = [1, 4]
 

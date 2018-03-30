@@ -55,3 +55,11 @@ def format_events(events_data, city, datetime_format):
 
     sorted(results, key=lambda x: x['start_time'])
     return results
+
+
+def format_group(group, other_obj={}):
+    return {
+        'name': group['name'],
+        'url': group['link'],
+        **other_obj
+    }

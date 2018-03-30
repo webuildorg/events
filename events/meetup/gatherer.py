@@ -4,6 +4,7 @@ import numpy as np
 from . import requestor
 from .filters import tokenize, simple_tokenize
 
+
 def get_groups(url, params={}):
     data = []
     resp = [0]
@@ -45,13 +46,15 @@ def simple_good_bad_group_ids(groups_data, blacklist_tokens=[]):
 def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresholds=[]):
     good_ids = []
     bad_ids = [[] for i in range(len(multi_blacklist_tokens))]
+    good_indexes = []
+    bad_indexes = []
 
-    for d in groups_data:
-        gid = str(d['id'])
+    for group_idx, group in enumerate(groups_data):
+        gid = str(group['id'])
         bad_counts = [0] * len(multi_blacklist_tokens)
 
         # Check the group name + audience for blacklist tokens
-        group_name = d['name'].lower() + ' ' + d['who'].lower()
+        group_name = group['name'].lower() + ' ' + group['who'].lower()
 
         for name_token in simple_tokenize(group_name):
             for i, blacklist_tokens in enumerate(multi_blacklist_tokens):
@@ -61,11 +64,11 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
         # Add group id to the bad ids if group name was blacklisted
         if max(bad_counts) > 0:
             bad_ids[np.argmax(bad_counts)].append(gid)
+            bad_indexes.append(group_idx)
             continue
 
-
         # Next, check the group description for blacklist tokens
-        description = list(tokenize(d['description']))
+        description = list(tokenize(group['description']))
         for des_token in description:
             for i, blacklist_tokens in enumerate(multi_blacklist_tokens):
                 if des_token in blacklist_tokens:
@@ -75,11 +78,13 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
         bad_count_idx = np.argmax(bad_counts)
         if max(bad_counts) > blacklist_thresholds[bad_count_idx]:
             bad_ids[bad_count_idx].append(gid)
+            bad_indexes.append(group_idx)
             continue
 
         good_ids.append(gid)
+        good_indexes.append(group_idx)
 
-    return good_ids, bad_ids
+    return good_ids, bad_ids, good_indexes, bad_indexes
 
 
 def get_groups_events(url, params, gids, max_responses=200):
