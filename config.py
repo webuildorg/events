@@ -1,16 +1,38 @@
 import os
+from events import spellchecker
 
 blockchain_blacklist_tokens = frozenset([
-  'ethereum', 'blockchain', 'bitcoin', 'ico', 'crypto',
-  'cryptocurrency', 'cryptocurrencies', 'money', 'gold'])
+    'ethereum', 'blockchain', 'bitcoin', 'ico', 'crypto',
+    'cryptocurrency', 'cryptocurrencies', 'money', 'gold'])
 
 business_blacklist_tokens = frozenset([
-    'business', 'investor', 'entrepreneurs', 'co-founders'])
+    'business',  'enterprise', 'entrepreneur', 'entrepreneurship',
+    'executive', 'cofounder', 'investor', 'marketer'])
+
 
 multi_blacklist_tokens = [
     blockchain_blacklist_tokens,
     business_blacklist_tokens
 ]
+
+# Enhance the blacklist tokens by expanding the set with possible typos
+enhanced_blockchain_blacklist_tokens = set()
+for token in blockchain_blacklist_tokens:
+    if len(token) < 6:
+        enhanced_blockchain_blacklist_tokens.add(token)
+    else:
+        enhanced_blockchain_blacklist_tokens = enhanced_blockchain_blacklist_tokens.union(spellchecker.typos(token))
+
+enhanced_business_blacklist_tokens = set()
+for token in business_blacklist_tokens:
+    enhanced_business_blacklist_tokens = enhanced_business_blacklist_tokens.union(spellchecker.typos(token))
+
+multi_enhanced_blacklist_tokens = [
+    enhanced_blockchain_blacklist_tokens,
+    enhanced_business_blacklist_tokens
+]
+
+# Minimum number of tokens to blacklist a group or event in each topic [blockchain, bussines]
 token_thresholds = [1, 4]
 
 blacklist_tokens = frozenset(list(blockchain_blacklist_tokens) + list(business_blacklist_tokens))

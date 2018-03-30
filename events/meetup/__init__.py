@@ -6,9 +6,8 @@ def grab_events(config):
     groups = gatherer.get_groups(config.meetup['groups_url'], config.meetup['params'].copy())
     print('Gathered', len(groups), 'groups')
 
-    good_ids, multi_bad_ids = gatherer.good_bad_group_ids(
-      groups, config.multi_blacklist_tokens, config.token_thresholds)
-    bad_ids = list(itertools.chain.from_iterable(multi_bad_ids))
+    good_ids, bad_ids = gatherer.good_bad_group_ids(groups, config.multi_enhanced_blacklist_tokens, config.token_thresholds)
+    bad_ids = list(itertools.chain.from_iterable(bad_ids))
     print('Found {} good meetup groups, {} bad meetup groups'.format(len(good_ids), len(bad_ids)))
 
     events_data = gatherer.get_groups_events(config.meetup['events_url'],

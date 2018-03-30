@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 import hashlib
@@ -8,9 +9,8 @@ from gzip import GzipFile
 from flask import Flask, jsonify, Response, request, send_from_directory, after_this_request
 
 import config
-import os
-import meetup
-import exporters
+from events import meetup
+from events import exporters
 
 class WeBuild:
     def __init__(self):
