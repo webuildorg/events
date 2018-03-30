@@ -4,6 +4,7 @@ p = inflect.engine()
 
 def edits1(word):
     """All edits that are one edit away from `word`."""
+    """enterpreneur, entreprenuers will fix to entrepreneur"""
     end_letters = 's'
     splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
     transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R)>1] + [word]
