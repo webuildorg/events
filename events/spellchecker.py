@@ -6,8 +6,8 @@ def edits1(word):
     """All edits that are one edit away from `word`."""
     """enterpreneur, entreprenuers will fix to entrepreneur"""
     end_letters = 's'
-    splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
-    transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R)>1] + [word]
+    splits = ((word[:i], word[i:]) for i in range(1, len(word) - 1))
+    transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R)>0] + [word]
     inserts = [w + c for w in transposes for c in end_letters]
     purals = [p.plural(w) for w in transposes]
     return set(transposes + inserts + purals)
