@@ -43,7 +43,7 @@ def remove_duplicate_events(events):
         If 2 same events fall on the same day, take the event with higher rsvp count """
     hashes = {}
     for i, event in enumerate(events):
-        m = hashlib.sha1(event['description'].encode('utf8'))
+        m = hashlib.sha1(event['description'].lower().encode('utf8'))
         mhash = m.hexdigest()
         if mhash in hashes:
             clash_event = events[hashes[mhash]]
