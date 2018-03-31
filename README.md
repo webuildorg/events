@@ -24,3 +24,6 @@ Generates a list of upcoming tech events in JSON
 ```
 $ python test.py
 ```
+
+### Deployment
+Auto-deployed on git pushes to master with the free single project tier at <https://www.openshift.com>
