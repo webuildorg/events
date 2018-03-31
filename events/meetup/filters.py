@@ -52,5 +52,9 @@ def is_valid_event(event, blacklist_tokens=frozenset(), country='sg', max_hours=
         has_valid_duration(event, max_hours))
 
 
-def filter_good_events(events, blacklist_tokens, country, max_event_hours):
+def get_good_events(events, blacklist_tokens, country, max_event_hours):
     return filter(lambda e: is_valid_event(e, blacklist_tokens, country, max_event_hours), events)
+
+
+def get_bad_events(events, blacklist_tokens, country, max_event_hours):
+    return filter(lambda e: not is_valid_event(e, blacklist_tokens, country, max_event_hours), events)

@@ -14,7 +14,7 @@ def construct_address(venue, city):
 
     has_postcode = postcode_regex.search(address)
     if city.lower() not in address.lower() and not has_postcode:
-        address += ', ' + venue.get('city')
+        address += ', ' + venue.get('city', '')
 
     return address
 
@@ -23,8 +23,9 @@ def format_events(events_data, city, datetime_format):
     results = []
 
     for event in events_data:
-        if 'repinned' in event['venue']:
-            event['venue'].pop('repinned')
+        venue = event.get('venue', {})
+        if 'repinned' in venue:
+            venue.pop('repinned')
 
         duration = int(event.get('duration', 0) / 1000)
         start_time = int(event['time'] / 1000)
@@ -32,9 +33,9 @@ def format_events(events_data, city, datetime_format):
         row = {
             'id': event['id'],
             'name': event['name'],
-            'description': event['description'],
-            'location': construct_address(event['venue'], city),
-            'venue': event['venue'],
+            'description': event.get('description'),
+            'location': construct_address(venue, city),
+            'venue': venue,
             'rsvp_count': event['yes_rsvp_count'],
             'rsvp_limit': event.get('rsvp_limit'),
             'waitlist_count': event.get('waitlist_count'),

@@ -138,6 +138,16 @@ def events():
         content_type='application/json')
 
 
+@app.route('/filtered_events')
+@check_etag
+@set_headers
+@gzipped
+def filtered_events():
+    return Response(
+        json.dumps(webuild.meetup.bad_events(), ensure_ascii=False),
+        content_type='application/json')
+
+
 @app.route('/cal')
 @check_etag
 @set_headers
