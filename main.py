@@ -12,6 +12,7 @@ import config
 from events.meetup import Meetup
 from events import exporters
 
+
 class WeBuild:
     def __init__(self, config):
         self.events_data = []
@@ -19,6 +20,7 @@ class WeBuild:
         self.data_hash = ''
         self.last_checked_timestamp = time.time()
         self.lock = threading.Lock()
+
 
 app = Flask(__name__)
 webuild = WeBuild(config)
@@ -31,14 +33,14 @@ def gzipped(f):
         def zipper(response):
             if ('gzip' not in request.headers.get('Accept-Encoding', '').lower() or
                 not 200 <= response.status_code < 300 or
-                'Content-Encoding' in response.headers):
+                    'Content-Encoding' in response.headers):
                 return response
 
             response.direct_passthrough = False
             gzip_buffer = BytesIO()
             with GzipFile(mode='wb',
-                      compresslevel=7,
-                      fileobj=gzip_buffer) as gzip_file:
+                    compresslevel=7,
+                    fileobj=gzip_buffer) as gzip_file:
                 gzip_file.write(response.get_data())
 
             response.set_data(gzip_buffer.getvalue())
@@ -163,7 +165,7 @@ def cron():
     global webuild
     now = time.time()
 
-    if now - webuild.last_checked_timestamp > 300: # 5 mins
+    if now - webuild.last_checked_timestamp > 300:  # 5 mins
         webuild.lock.acquire()
         webuild.last_checked_timestamp = now
         webuild.lock.release()

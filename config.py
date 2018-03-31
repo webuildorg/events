@@ -6,7 +6,7 @@ blockchain_blacklist_tokens = frozenset([
     'crypto', 'cryptocurrency', 'money', 'gold'])
 
 business_blacklist_tokens = frozenset([
-    'business',  'enterprise', 'entrepreneur', 'entrepreneurship',
+    'business', 'enterprise', 'entrepreneur', 'entrepreneurship',
     'executive', 'founder', 'investor'])
 
 
@@ -21,18 +21,21 @@ for token in blockchain_blacklist_tokens:
     if len(token) < 6:
         enhanced_blockchain_blacklist_tokens.add(token)
     else:
-        enhanced_blockchain_blacklist_tokens = enhanced_blockchain_blacklist_tokens.union(spellchecker.typos(token))
+        enhanced_blockchain_blacklist_tokens = enhanced_blockchain_blacklist_tokens.union(
+            spellchecker.typos(token))
 
 enhanced_business_blacklist_tokens = set()
 for token in business_blacklist_tokens:
-    enhanced_business_blacklist_tokens = enhanced_business_blacklist_tokens.union(spellchecker.typos(token))
+    enhanced_business_blacklist_tokens = enhanced_business_blacklist_tokens.union(
+        spellchecker.typos(token))
 
 multi_enhanced_blacklist_tokens = [
     enhanced_blockchain_blacklist_tokens,
     enhanced_business_blacklist_tokens
 ]
 
-print('{} blacklist tokens'.format(len(enhanced_blockchain_blacklist_tokens) + len(enhanced_business_blacklist_tokens)))
+print('{} blacklist tokens'.format(
+    len(enhanced_blockchain_blacklist_tokens) + len(enhanced_business_blacklist_tokens)))
 
 # Minimum number of tokens to blacklist a group or event in each topic [blockchain, bussines]
 token_thresholds = [1, 4]

@@ -2,6 +2,7 @@ from datetime import datetime
 from icalendar import Calendar, Event, vDatetime
 from bs4 import BeautifulSoup
 
+
 def display(cal):
     return cal.to_ical().decode('utf-8').strip().split('\r\n')
 
@@ -28,8 +29,10 @@ def events_to_ics(events):
         cal_event['uid'] = event['id']
         cal_event['summary'] = event['name']
         cal_event['dtstamp'] = vDatetime(datetime.now())
-        cal_event['dtstart'] = vDatetime(datetime.utcfromtimestamp(event['start_time'] + event['utc_offset']))
-        cal_event['dtend'] = vDatetime(datetime.utcfromtimestamp(event['end_time'] + event['utc_offset']))
+        cal_event['dtstart'] = vDatetime(datetime.utcfromtimestamp(
+            event['start_time'] + event['utc_offset']))
+        cal_event['dtend'] = vDatetime(datetime.utcfromtimestamp(
+            event['end_time'] + event['utc_offset']))
         cal_event['url'] = event['url']
         cal_event['location'] = event['location']
         cal_event['description'] = description

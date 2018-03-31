@@ -29,7 +29,8 @@ class Meetup(object):
         print('Filtered {} down to {} good meetup events'.format(len(events_data), len(good_events)))
 
         good_filtered_events = list(filters.remove_duplicate_events(good_events))
-        print('Removed good duplicate events from {} to {}'.format(len(good_events), len(good_filtered_events)))
+        print('Removed good duplicate events from {} to {}'.format(
+            len(good_events), len(good_filtered_events)))
 
         self.groups = groups
         self.events_data = events_data
