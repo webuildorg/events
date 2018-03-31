@@ -2,7 +2,7 @@ import os
 from events import spellchecker
 
 blockchain_blacklist_tokens = frozenset([
-    'ethereum', 'blockchain', 'bitcoin', 'ico',
+    'ethereum', 'blockchain', 'bitcoin', 'ico', 'ledger',
     'crypto', 'cryptocurrency', 'money', 'gold'])
 
 business_blacklist_tokens = frozenset([
