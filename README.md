@@ -3,7 +3,11 @@
 Tested on Python 3.6+
 
 Subscribe to the ics calendar: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/cal   
-Events JSON: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/events
+List of events: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/events   
+List of groups: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/groups   
+
+List of filtered groups: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/filtered_groups   
+List of filtered events: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/filtered_events
 
 ### Development
 ```
