@@ -28,13 +28,16 @@ class Meetup(object):
                             config.meetup['params']['country'], config.meetup['max_event_hours']))
         print('Filtered {} down to {} good meetup events'.format(len(events_data), len(good_events)))
 
+        good_filtered_events = list(filters.remove_duplicate_events(good_events))
+        print('Removed good duplicate events from {} to {}'.format(len(good_events), len(good_filtered_events)))
+
         self.groups = groups
         self.events_data = events_data
         self.good_indexes = good_indexes
         self.bad_indexes = bad_indexes
 
         return formatter.format_events(
-            good_events,
+            good_filtered_events,
             config.meetup['params']['location'],
             config.meetup['display_time_format'])
 
