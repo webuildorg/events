@@ -64,11 +64,13 @@ def is_good_event_name(event, blacklist_tokens):
 
 
 online_words = ['http', 'online', 'webinar', 'stream']
-def is_inperson_venue(venue = {}):
-    name = venue.get('name', '').lower()
 
-    return ('http' not in venue.get('address_1', '') and
-        sum([(word in name) for word in online_words]) == 0)
+
+def is_inperson_venue(venue={}):
+    name = venue.get('name', '').lower()
+    addr = venue.get('address_1', '').lower()
+
+    return sum([(word in name or word in addr) for word in online_words]) == 0
 
 
 def is_valid_venue(event, country):

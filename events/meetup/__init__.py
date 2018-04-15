@@ -6,8 +6,9 @@ class Meetup(object):
     def __init__(self, config):
         self.config = config
         self.groups = []
-        self.good_indexes = []
-        self.bad_indexes = []
+        self.good_group_indexes = []
+        self.bad_group_indexes = []
+        self.bad_group_ids = []
         self.events_data = []
 
     def grab_events(self):
@@ -34,8 +35,9 @@ class Meetup(object):
 
         self.groups = groups
         self.events_data = events_data
-        self.good_indexes = good_indexes
-        self.bad_indexes = bad_indexes
+        self.good_group_indexes = good_indexes
+        self.bad_group_indexes = bad_indexes
+        self.bad_group_ids = bad_ids
 
         return formatter.format_events(
             good_filtered_events,
@@ -43,16 +45,20 @@ class Meetup(object):
             config.meetup['display_time_format'])
 
     def good_groups(self):
-        return [formatter.format_group(self.groups[gid]) for gid in self.good_indexes]
+        return [formatter.format_group(self.groups[gid]) for gid in self.good_group_indexes]
 
     def bad_groups(self):
-        return [formatter.format_group(self.groups[gid]) for gid in self.bad_indexes]
+        return [formatter.format_group(self.groups[gid]) for gid in self.bad_group_indexes]
 
     def bad_events(self):
         config = self.config
-        bad_events = list(filters.get_bad_events(self.events_data, config.blacklist_tokens,
-                            config.meetup['params']['country'], config.meetup['max_event_hours']))
+        events = gatherer.get_groups_events(config.meetup['events_url'],
+            config.meetup['params'].copy(), self.bad_group_ids, config.meetup['max_meetup_responses'])
+        valid_events = filters.remove_duplicate_events(
+            list(filter(lambda e: filters.is_valid_venue(e, config.meetup['params']['country']), events))
+        )
+
         return formatter.format_events(
-            bad_events,
+            valid_events,
             config.meetup['params']['location'],
             config.meetup['display_time_format'])
