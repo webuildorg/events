@@ -53,6 +53,22 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
         gid = str(group['id'])
         bad_counts = [0] * len(multi_blacklist_tokens)
 
+        # Check the group topics for blacklist tokens
+        for topic in group['topics']:
+            for name in topic['name'].lower().split(' '):
+                for i, blacklist_tokens in enumerate(multi_blacklist_tokens):
+                    if name in blacklist_tokens:
+                        bad_counts[i] += 1
+
+        # Add to the bad ids if no. of word topics exceed blacklist threshold
+        bad_count_idx = np.argmax(bad_counts)
+        if bad_counts[bad_count_idx] > blacklist_thresholds[bad_count_idx] + 1:
+            bad_ids[np.argmax(bad_counts)].append(gid)
+            bad_indexes.append(group_idx)
+            continue
+
+        # Reset the counts for the name and description checking
+        bad_counts = [0] * len(multi_blacklist_tokens)
         # Check the group name + audience for blacklist tokens
         group_name = group['name'].lower() + ' ' + group['who'].lower()
 
@@ -67,16 +83,6 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
             bad_indexes.append(group_idx)
             continue
 
-        # for i, tokens in enumerate(multi_blacklist_tokens):
-        #     for token in tokens:
-        #         if token in group_name:
-        #             bad_counts[i] += 1
-
-        # # Add group id to the bad ids if group name was blacklisted
-        # if max(bad_counts) > 0:
-        #     bad_ids[np.argmax(bad_counts)].append(gid)
-        #     continue
-
         # Next, check the group description for blacklist tokens
         description = list(tokenize(group['description']))
         for des_token in description:
@@ -86,7 +92,7 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
 
         # Add to the bad ids if no. of description tokens exceed blacklist threshold
         bad_count_idx = np.argmax(bad_counts)
-        if max(bad_counts) > blacklist_thresholds[bad_count_idx]:
+        if bad_counts[bad_count_idx] > blacklist_thresholds[bad_count_idx]:
             bad_ids[bad_count_idx].append(gid)
             bad_indexes.append(group_idx)
             continue

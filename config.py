@@ -23,7 +23,8 @@ meetup = {
         'key': os.environ['MEETUP_API_KEY'],
         'country': 'SG',
         'location': 'Singapore',
-        'category': 34
+        'category': 34,
+        'fields': 'topics'
     }
 }
 
