@@ -62,7 +62,7 @@ def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresho
 
         # Add to the bad ids if no. of word topics exceed blacklist threshold
         bad_count_idx = np.argmax(bad_counts)
-        if bad_counts[bad_count_idx] > blacklist_thresholds[bad_count_idx] + 1:
+        if bad_counts[bad_count_idx] > blacklist_thresholds[bad_count_idx]:
             bad_ids[np.argmax(bad_counts)].append(gid)
             bad_indexes.append(group_idx)
             continue
