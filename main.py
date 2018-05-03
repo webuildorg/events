@@ -1,6 +1,6 @@
 import os
 import threading
-import time
+from datetime import datetime
 import hashlib
 import json
 import functools
@@ -18,7 +18,7 @@ class WeBuild:
         self.events_data = []
         self.meetup = Meetup(config)
         self.data_hash = ''
-        self.last_checked_timestamp = time.time()
+        self.last_checked_timestamp = datetime.utcnow()
         self.lock = threading.Lock()
 
 
@@ -135,8 +135,15 @@ def events():
         print('304 response!')
         return Response(status=304)
 
-    return Response(
-        json.dumps(webuild.events_data, ensure_ascii=False),
+    resp = {
+        'meta': {
+            'generated_at': webuild.last_checked_timestamp.isoformat(),
+            'location': config.meetup['params']['location'],
+            'total_events': len(webuild.events_data)
+        },
+        'events': webuild.events_data
+    }
+    return Response(json.dumps(resp, ensure_ascii=False),
         content_type='application/json')
 
 
@@ -163,7 +170,7 @@ def cal():
 @app.route('/cron')
 def cron():
     global webuild
-    now = time.time()
+    now = datetime.utcnow()
 
     if now - webuild.last_checked_timestamp > 300:  # 5 mins
         webuild.lock.acquire()
