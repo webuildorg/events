@@ -1,5 +1,5 @@
 import re
-import datetime
+from datetime import datetime
 
 postcode_regex = re.compile('(?<=\D)\d{6}(\D|$)')
 address_regex = re.compile('\s{2,}')
@@ -45,9 +45,9 @@ def format_events(events_data, city, datetime_format):
             'group_url': 'https://meetup.com/' + event['group']['urlname'],
             'utc_offset': utc_offset,
             'duration': duration,
-            'start_time': start_time,
-            'end_time': start_time + duration,
-            'formatted_time': datetime.datetime.utcfromtimestamp(
+            'start_time': datetime.fromtimestamp(start_time).isoformat() + 'Z',
+            'end_time': datetime.fromtimestamp(start_time + duration).isoformat() + 'Z',
+            'formatted_time': datetime.utcfromtimestamp(
                 start_time + utc_offset).strftime(datetime_format),
             'platform': 'meetup'
         }
