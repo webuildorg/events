@@ -45,8 +45,9 @@ def format_events(events_data, city, datetime_format):
             'group_url': 'https://meetup.com/' + event['group']['urlname'],
             'utc_offset': utc_offset,
             'duration': duration,
-            'start_time': datetime.fromtimestamp(start_time).isoformat() + 'Z',
-            'end_time': datetime.fromtimestamp(start_time + duration).isoformat() + 'Z',
+            'unix_start_time': start_time,
+            'start_time': datetime.utcfromtimestamp(start_time).isoformat() + 'Z',
+            'end_time': datetime.utcfromtimestamp(start_time + duration).isoformat() + 'Z',
             'formatted_time': datetime.utcfromtimestamp(
                 start_time + utc_offset).strftime(datetime_format),
             'platform': 'meetup'
