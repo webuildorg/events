@@ -172,7 +172,7 @@ def cron():
     global webuild
     now = datetime.utcnow()
 
-    if now - webuild.last_checked_timestamp > 300:  # 5 mins
+    if (now - webuild.last_checked_timestamp).seconds > 300:  # 5 mins
         webuild.lock.acquire()
         webuild.last_checked_timestamp = now
         webuild.lock.release()
