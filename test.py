@@ -1,4 +1,4 @@
-import meetup
+import events.meetup as meetup
 import config
 
 
@@ -8,5 +8,6 @@ def dump_data(events_json, filename='data.json'):
         json.dump(events_json, outfile, indent=2)
 
 
-events = meetup.grab_events(config)
+m = meetup.Meetup(config)
+events = m.grab_events()
 dump_data(events, 'sg_events.json')
