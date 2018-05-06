@@ -66,8 +66,7 @@ def remove_duplicate_events(events):
 
                 if eday == clash_eday and event['rsvp_count'] > clash_event['rsvp_count']:
                     # Replace the older duplicate event if the rsvp count is higher
-                    clash_hashes = event_hashes[clash_index]
-                    for chash in clash_hashes:
+                    for chash in event_hashes[clash_index]:
                         hashes[chash] = i
 
                     events_id_set.remove(clash_index)
