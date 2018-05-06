@@ -33,30 +33,52 @@ def tokenize(text):
             yield part
 
 
-def epochms_to_day(epochms):
-    """ Convert unix epoch time in ms to day string """
-    return time.strftime("%y%m%d", time.gmtime(int(epochms / 1000)))
+def unixtimestamp_to_day(unixtime):
+    """ Convert unix epoch time in seconds to day string """
+    return time.strftime("%y%m%d", time.gmtime(unixtime))
 
 
 def remove_duplicate_events(events):
-    """ Remove duplicates based on the hash of an event description.
+    """ Remove duplicates based on the hash of various event strings.
         If 2 same events fall on the same day, take the event with higher rsvp count """
     hashes = {}
+    events_id_set = set()
+    event_hashes = [[] for e in events]
+
     for i, event in enumerate(events):
-        m = hashlib.sha1(event['description'].lower().encode('utf8'))
-        mhash = m.hexdigest()
-        if mhash in hashes:
-            clash_event = events[hashes[mhash]]
-            clash_eday = epochms_to_day(clash_event['time'])
-            eday = epochms_to_day(event['time'])
+        event_strings = [
+            event['description'],
+            event['name'] + event['start_time']
+        ]
 
-            if eday == clash_eday and event['yes_rsvp_count'] > clash_event['yes_rsvp_count']:
-                # Replace the same event if the rsvp count is higher
-                hashes[mhash] = i
-        else:
-            hashes[mhash] = i
+        has_clashed = False
+        for estr in event_strings:
+            # An event is a duplicate if one of its string clashes with a previous event
+            ehash = hashlib.sha1(estr.lower().encode('utf8')).hexdigest()
+            event_hashes[i].append(ehash)
 
-    return (events[idx] for idx in hashes.values())
+            if ehash in hashes:
+                has_clashed = True
+                clash_index = hashes[ehash]
+                clash_event = events[clash_index]
+                clash_eday = unixtimestamp_to_day(clash_event['unix_start_time'])
+                eday = unixtimestamp_to_day(event['unix_start_time'])
+
+                if eday == clash_eday and event['rsvp_count'] > clash_event['rsvp_count']:
+                    # Replace the older duplicate event if the rsvp count is higher
+                    clash_hashes = event_hashes[clash_index]
+                    for chash in clash_hashes:
+                        hashes[chash] = i
+
+                    events_id_set.remove(clash_index)
+                    events_id_set.add(i)
+                else: # Not adding the new event
+                    events_id_set.discard(i)
+            elif not has_clashed:
+                hashes[ehash] = i
+                events_id_set.add(i)
+
+    return (events[idx] for idx in events_id_set)
 
 
 def is_good_event_name(event, blacklist_tokens):

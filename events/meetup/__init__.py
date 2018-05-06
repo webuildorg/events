@@ -29,7 +29,12 @@ class Meetup(object):
                             config.meetup['params']['country'], config.meetup['max_event_hours']))
         print('Filtered {} down to {} good meetup events'.format(len(events_data), len(good_events)))
 
-        good_filtered_events = list(filters.remove_duplicate_events(good_events))
+        events_json = formatter.format_events(
+            good_events,
+            config.meetup['params']['location'],
+            config.meetup['display_time_format'])
+
+        good_filtered_events = list(filters.remove_duplicate_events(events_json))
         print('Removed good duplicate events from {} to {}'.format(
             len(good_events), len(good_filtered_events)))
 
@@ -39,10 +44,7 @@ class Meetup(object):
         self.bad_group_indexes = bad_indexes
         self.bad_group_ids = bad_ids
 
-        return formatter.format_events(
-            good_filtered_events,
-            config.meetup['params']['location'],
-            config.meetup['display_time_format'])
+        return good_filtered_events
 
     def good_groups(self):
         return [formatter.format_group(self.groups[gid]) for gid in self.good_group_indexes]
