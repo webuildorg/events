@@ -9,6 +9,7 @@ PAT_ALPHABETIC = re.compile(r'(((?![\d])\w)+)', re.UNICODE)
 URL_REGEX = re.compile(r'https?:\/\/.*\.\w{2,10}', re.UNICODE)
 NEWLINE_REGEX = re.compile('\. |\n{1,2}')
 
+
 def simple_tokenize(text):
     """Tokenize input test using :const:`gensim.utils.PAT_ALPHABETIC`.
     Parameters
@@ -50,7 +51,8 @@ def remove_duplicate_events(events):
         eday = event_to_date(event)
         event_strings = [event['description']]
         # Hashes of the event day + sentences. Essentially a simple plagarism detector
-        event_strings += [eday + s for s in NEWLINE_REGEX.split(event['description']) if len(s) > 100]
+        event_strings += [eday +
+            s for s in NEWLINE_REGEX.split(event['description']) if len(s) > 100]
 
         has_clashed = False
         for estr in event_strings:
@@ -71,7 +73,7 @@ def remove_duplicate_events(events):
 
                     events_id_set.remove(clash_index)
                     events_id_set.add(i)
-                elif i != clash_index: # Not adding the new event
+                elif i != clash_index:  # Not adding the new event
                     events_id_set.discard(i)
             elif not has_clashed:
                 hashes[ehash] = i
@@ -80,11 +82,13 @@ def remove_duplicate_events(events):
     return (events[idx] for idx in sorted(events_id_set))
 
 
+online_words = ['http', 'online', 'webinar', 'stream', 'paid']
+
+
 def is_good_event_name(event, blacklist_tokens):
-    return len(blacklist_tokens & frozenset(simple_tokenize(event['name']))) == 0
-
-
-online_words = ['http', 'online', 'webinar', 'stream']
+    name_tokens = frozenset(simple_tokenize(event['name']))
+    return (len(blacklist_tokens & name_tokens) == 0
+        and sum([name in online_words for name in name_tokens]) == 0)
 
 
 def is_inperson_venue(venue={}):
