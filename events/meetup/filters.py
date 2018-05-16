@@ -77,7 +77,7 @@ def remove_duplicate_events(events):
                 hashes[ehash] = i
                 events_id_set.add(i)
 
-    return (events[idx] for idx in events_id_set)
+    return (events[idx] for idx in sorted(events_id_set))
 
 
 def is_good_event_name(event, blacklist_tokens):
