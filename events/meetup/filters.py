@@ -53,7 +53,7 @@ def remove_duplicate_events(events):
         event_strings += [eday + s for s in NEWLINE_REGEX.split(event['description']) if len(s) > 100]
 
         has_clashed = False
-        for ei, estr in enumerate(event_strings):
+        for estr in event_strings:
             # An event is a duplicate if one of its string clashes with a previous event
             ehash = hashlib.sha1(estr.lower().encode('utf8')).hexdigest()
             event_hashes[i].append(ehash)

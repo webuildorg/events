@@ -68,8 +68,7 @@ def format_events(events_data, city, datetime_format):
 
         results.append(row)
 
-    sorted(results, key=lambda x: x['start_time'])
-    return results
+    return sorted(results, key=lambda x: x['start_time'])
 
 
 def format_group(group, other_obj={}):
