@@ -1,12 +1,13 @@
-import time
+from datetime import datetime
 import re
 import hashlib
+import itertools
 from bs4 import BeautifulSoup
 from gensim.parsing.preprocessing import STOPWORDS
 
 PAT_ALPHABETIC = re.compile(r'(((?![\d])\w)+)', re.UNICODE)
 URL_REGEX = re.compile(r'https?:\/\/.*\.\w{2,10}', re.UNICODE)
-
+NEWLINE_REGEX = re.compile('\. |\n{1,2}')
 
 def simple_tokenize(text):
     """Tokenize input test using :const:`gensim.utils.PAT_ALPHABETIC`.
@@ -33,9 +34,9 @@ def tokenize(text):
             yield part
 
 
-def unixtimestamp_to_day(unixtime):
-    """ Convert unix epoch time in seconds to day string """
-    return time.strftime("%y%m%d", time.gmtime(unixtime))
+def event_to_date(event):
+    """ Convert event to date string e.g 180628 """
+    return datetime.utcfromtimestamp(event['unix_start_time'] + event.get('utc_offset', 0)).strftime('%y%m%d')
 
 
 def remove_duplicate_events(events):
@@ -46,13 +47,13 @@ def remove_duplicate_events(events):
     event_hashes = [[] for e in events]
 
     for i, event in enumerate(events):
-        event_strings = [
-            event['description'],
-            event['name'] + event['start_time']
-        ]
+        eday = event_to_date(event)
+        event_strings = [event['description']]
+        # Hashes of the event day + sentences. Essentially a simple plagarism detector
+        event_strings += [eday + s for s in NEWLINE_REGEX.split(event['description']) if len(s) > 100]
 
         has_clashed = False
-        for estr in event_strings:
+        for ei, estr in enumerate(event_strings):
             # An event is a duplicate if one of its string clashes with a previous event
             ehash = hashlib.sha1(estr.lower().encode('utf8')).hexdigest()
             event_hashes[i].append(ehash)
@@ -61,8 +62,7 @@ def remove_duplicate_events(events):
                 has_clashed = True
                 clash_index = hashes[ehash]
                 clash_event = events[clash_index]
-                clash_eday = unixtimestamp_to_day(clash_event['unix_start_time'])
-                eday = unixtimestamp_to_day(event['unix_start_time'])
+                clash_eday = event_to_date(clash_event)
 
                 if eday == clash_eday and event['rsvp_count'] > clash_event['rsvp_count']:
                     # Replace the older duplicate event if the rsvp count is higher
@@ -71,7 +71,7 @@ def remove_duplicate_events(events):
 
                     events_id_set.remove(clash_index)
                     events_id_set.add(i)
-                else: # Not adding the new event
+                elif i != clash_index: # Not adding the new event
                     events_id_set.discard(i)
             elif not has_clashed:
                 hashes[ehash] = i

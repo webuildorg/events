@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 postcode_regex = re.compile('(?<=\D)\d{6}(\D|$)')
 address_regex = re.compile('\s{2,}')
@@ -19,6 +20,17 @@ def construct_address(venue, city):
     return address
 
 
+def prettify_description(description):
+    soup = BeautifulSoup(description, 'html.parser')
+    paragraphs = soup.find_all('p')
+    if len(paragraphs) > 0:
+        for b in soup.find_all('br'):
+            b.replace_with('\n')
+        description = '\n\n'.join([p.get_text() for p in paragraphs])
+
+    return description
+
+
 def format_events(events_data, city, datetime_format):
     results = []
 
@@ -30,10 +42,11 @@ def format_events(events_data, city, datetime_format):
         duration = int(event.get('duration', 0) / 1000)
         start_time = int(event['time'] / 1000)
         utc_offset = int(event['utc_offset'] / 1000)
+
         row = {
             'id': event['id'],
             'name': event['name'],
-            'description': event.get('description'),
+            'description': prettify_description(event.get('description')),
             'location': construct_address(venue, city),
             'venue': venue,
             'rsvp_count': event['yes_rsvp_count'],

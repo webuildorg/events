@@ -18,13 +18,7 @@ def events_to_ics(events):
 
     for event in events:
         description = event['description']
-        soup = BeautifulSoup(description, 'html.parser')
-        paragraphs = soup.find_all('p')
-        if len(paragraphs) > 0:
-            for b in soup.find_all('br'):
-                b.replace_with('\n')
-            description = '\n\n'.join([p.get_text() for p in paragraphs])
-            description += '\n\nRSVP count: {}'.format(event['rsvp_count'])
+        description += '\n\nRSVP count: {}'.format(event['rsvp_count'])
 
         start_time = datetime.datetime.strptime(event['start_time'], ISO8601_format)
         start_time += datetime.timedelta(seconds=event['utc_offset'])
