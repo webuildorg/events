@@ -21,11 +21,12 @@ def events_to_ics(events):
         description += '\n\nRSVP count: {}'.format(event['rsvp_count'])
 
         start_time = datetime.datetime.strptime(event['start_time'], ISO8601_format)
-        start_time += datetime.timedelta(seconds=event['utc_offset'])
+        start_time = start_time.replace(tzinfo=datetime.timezone.utc)
+
         cal_event = Event()
         cal_event['uid'] = event['id']
         cal_event['summary'] = event['name']
-        cal_event['dtstamp'] = vDatetime(datetime.datetime.utcnow())
+        cal_event['dtstamp'] = vDatetime(datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc))
         cal_event['dtstart'] = vDatetime(start_time)
         cal_event['dtend'] = vDatetime(start_time + datetime.timedelta(seconds=event['duration']))
         cal_event['url'] = event['url']
