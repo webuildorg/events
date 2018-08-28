@@ -25,9 +25,9 @@ def events_to_ics(events):
         cal_event = Event()
         cal_event['uid'] = event['id']
         cal_event['summary'] = event['name']
-        cal_event['dtstamp'] = vDatetime(datetime.datetime.utcnow()) + 'Z'
-        cal_event['dtstart'] = vDatetime(start_time) + 'Z'
-        cal_event['dtend'] = vDatetime(start_time + datetime.timedelta(seconds=event['duration'])) + 'Z'
+        cal_event['dtstamp'] = vDatetime(datetime.datetime.utcnow())
+        cal_event['dtstart'] = vDatetime(start_time)
+        cal_event['dtend'] = vDatetime(start_time + datetime.timedelta(seconds=event['duration']))
         cal_event['url'] = event['url']
         cal_event['location'] = event['location']
         cal_event['description'] = description
