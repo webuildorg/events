@@ -10,7 +10,7 @@ business_blacklist_tokens = frozenset([
     'executive', 'founder', 'investor', 'skillsfuture'])
 
 # Minimum number of tokens to blacklist a group or event in each topic [blockchain, bussines]
-token_thresholds = [1, 4]
+token_thresholds = [1, 5]
 
 meetup = {
     'groups_url': 'https://api.meetup.com/find/groups',
