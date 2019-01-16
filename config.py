@@ -7,7 +7,7 @@ blockchain_blacklist_tokens = frozenset([
 
 business_blacklist_tokens = frozenset([
     'business', 'enterprise', 'entrepreneur', 'entrepreneurship',
-    'executive', 'founder', 'investor'])
+    'executive', 'founder', 'investor', 'skillsfuture'])
 
 # Minimum number of tokens to blacklist a group or event in each topic [blockchain, bussines]
 token_thresholds = [1, 4]
