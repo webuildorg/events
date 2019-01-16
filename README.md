@@ -1,12 +1,14 @@
 # Tech events in SG!
 
+Auto finds free tech events in SG.
 Tested on Python 3.6+
 
-Subscribe to the ics calendar: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/cal   
-List of events: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/events   
-List of groups: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/groups   
-List of filtered groups: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/filtered_groups   
-List of filtered events: http://api-webuild.7e14.starter-us-west-2.openshiftapps.com/filtered_events  
+### Endpoints:
+- Subscribe to the ics calendar: https://webuild-events.herokuapp.com/cal
+- List of events: https://webuild-events.herokuapp.com/events
+- List of groups: https://webuild-events.herokuapp.com/groups
+- List of filtered groups: https://webuild-events.herokuapp.com/filtered_groups
+- List of filtered events: https://webuild-events.herokuapp.com/filtered_events
 
 ### Development
 ```
@@ -25,4 +27,4 @@ $ python test.py
 ```
 
 ### Deployment
-Auto-deployed on git pushes to master with the free single project tier at <https://www.openshift.com>
+Auto-deployed on git pushes to heroku
