@@ -54,13 +54,12 @@ class Meetup(object):
 
     def bad_events(self):
         config = self.config
-        events = gatherer.get_groups_events(config.meetup['events_url'],
+        bad_events = gatherer.get_groups_events(config.meetup['events_url'],
             config.meetup['params'].copy(), self.bad_group_ids, config.meetup['max_meetup_responses'])
-        valid_events = filters.remove_duplicate_events(
-            list(filter(lambda e: filters.is_valid_venue(e, config.meetup['params']['country']), events))
-        )
 
-        return formatter.format_events(
-            valid_events,
+        bad_events_json = formatter.format_events(
+            bad_events,
             config.meetup['params']['location'],
             config.meetup['display_time_format'])
+
+        return list(filters.remove_duplicate_events(bad_events_json))
