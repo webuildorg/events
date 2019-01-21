@@ -6,7 +6,7 @@ import json
 import functools
 from io import BytesIO
 from gzip import GzipFile
-from flask import Flask, jsonify, Response, request, send_from_directory, after_this_request
+from flask import Flask, Response, request, send_from_directory, after_this_request
 
 import config
 from events.meetup import Meetup

@@ -53,4 +53,3 @@ blacklist_tokens = frozenset(list(blockchain_blacklist_tokens) + list(business_b
 
 print('{} blacklist tokens'.format(
     len(enhanced_blockchain_blacklist_tokens) + len(enhanced_business_blacklist_tokens)))
-

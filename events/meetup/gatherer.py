@@ -43,15 +43,21 @@ def simple_good_bad_group_ids(groups_data, blacklist_tokens=[]):
 
 
 # Separate meetup groups ids into good and bad based on multiple blacklist tokens
-def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresholds=[]):
+def good_bad_group_ids(groups_data, multi_blacklist_tokens=[], blacklist_thresholds=[], category=34):
     good_ids = []
-    bad_ids = [[] for i in range(len(multi_blacklist_tokens))]
+    bad_ids = [[] for i in range(len(multi_blacklist_tokens)+1)]
+    bad_category_idx = len(multi_blacklist_tokens)
     good_indexes = []
     bad_indexes = []
 
     for group_idx, group in enumerate(groups_data):
         gid = str(group['id'])
         bad_counts = [0] * len(multi_blacklist_tokens)
+
+        if category not in group['meta_category'].get('category_ids', []):
+            bad_ids[bad_category_idx].append(gid)
+            bad_indexes.append(group_idx)
+            continue
 
         # Check the group topics for blacklist tokens
         for topic in group['topics']:
